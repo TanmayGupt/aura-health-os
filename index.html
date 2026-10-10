@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA — Autonomous Health Intelligence OS</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased">
+
+    <!-- Top Navigation / Status Header -->
+    <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50 px-6 py-3.5 flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <div class="h-3.5 w-3.5 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span class="text-base font-black tracking-wider text-white">AURA <span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded font-bold uppercase tracking-widest ml-2">Health OS v7.0</span></span>
+        </div>
+        <div class="hidden md:flex items-center space-x-4 text-xs font-medium text-slate-400">
+            <span class="bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700/60">System Mode: <strong class="text-emerald-400" id="systemMode">Active Interceptor</strong></span>
+            <span class="bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700/60">Privacy: <strong class="text-emerald-400">Zero-Knowledge Local</strong></span>
+        </div>
+    </header>
+
+    <!-- Main Workspace Grid -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Left Column: Camera Vision, Work Strain Test, Analysis Outputs (7 Cols) -->
+        <section class="lg:col-span-7 space-y-6">
+
+            <!-- Work & Caloric Expenditure Test Module -->
+            <div class="bg-slate-900/90 border border-slate-800/80 p-6 rounded-3xl shadow-xl space-y-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-lg font-extrabold text-white tracking-tight">Work & Energy Expenditure Assessment</h2>
+                        <p class="text-xs text-slate-400">Quantify physical labor and cognitive strain to calculate exact caloric recovery targets.</p>
+                    </div>
+                    <button onclick="toggleWorkModal()" class="px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold rounded-xl hover:bg-emerald-500/20 transition">Run Test</button>
+                </div>
+                <div id="workTestSummary" class="bg-slate-950 p-4 rounded-2xl border border-slate-800/80 flex justify-between items-center text-xs">
+                    <div>
+                        <span class="text-slate-500 block uppercase font-bold text-[10px]">Today's Evaluated Strain</span>
+                        <span id="evaluatedStrainText" class="text-slate-200 font-semibold">Moderate Cognitive Focus (4 hrs) + Light Physical Activity</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-slate-500 block uppercase font-bold text-[10px]">Est. Recovery Needed</span>
+                        <span id="evaluatedKcalText" class="text-emerald-400 font-extrabold text-sm">2,150 kcal</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vision & Bio-Culinary Camera Interceptor -->
+            <div class="bg-slate-900/90 border border-slate-800/80 p-6 rounded-3xl shadow-xl space-y-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-lg font-extrabold text-white tracking-tight">Omni-Vision Bio-Culinary Interceptor</h2>
+                        <p class="text-xs text-slate-400">Scan raw ingredients or prepared dishes to compute glycemic load, psychological triggers, and budget swaps.</p>
+                    </div>
+                    <span class="text-[10px] font-bold bg-slate-800 text-slate-300 px-3 py-1 rounded-xl border border-slate-700">Camera / File Mode</span>
+                </div>
+
+                <!-- Camera Upload / Input Interface -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="border-2 border-dashed border-slate-800 hover:border-emerald-500/50 rounded-2xl p-4 flex flex-col items-center justify-center text-center bg-slate-950 transition cursor-pointer relative" onclick="document.getElementById('fileInput').click()">
+                        <svg class="w-8 h-8 text-slate-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h0.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <span class="text-xs text-slate-300 font-semibold">Upload Photo or Scan Dish</span>
+                        <span class="text-[10px] text-slate-500 mt-1">Supports JPG, PNG, WEBP</span>
+                        <input type="file" id="fileInput" class="hidden" accept="image/*" onchange="handleImageUpload(event)">
+                    </div>
+
+                    <div class="flex flex-col justify-between space-y-2">
+                        <textarea id="mealInput" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-3.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 resize-none" placeholder="Or enter ingredients manually (e.g., 2 Potatoes, 1 Katori Dal, 2 tbsp Butter, White Rice)...">2 Potatoes, 1 Katori Dal, 2 tbsp Cream, White Rice</textarea>
+                        <button onclick="runOmniVisionAnalysis()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-3 px-4 rounded-xl transition text-xs shadow-lg shadow-emerald-500/20">Analyze & Optimize Recipe</button>
+                    </div>
+                </div>
+
+                <!-- Image Preview Box -->
+                <div id="imagePreviewContainer" class="hidden bg-slate-950 p-3 rounded-2xl border border-slate-800 flex items-center space-x-3">
+                    <img id="imagePreview" class="w-16 h-16 object-cover rounded-xl border border-slate-700" src="" alt="Meal Preview">
+                    <div class="flex-1 text-xs">
+                        <span class="text-emerald-400 font-bold block">Visual Input Loaded</span>
+                        <span id="imageFileName" class="text-slate-400 text-[10px]">image.jpg</span>
+                    </div>
+                    <button onclick="clearImage()" class="text-slate-500 hover:text-red-400 text-xs font-bold px-2">Remove</button>
+                </div>
+            </div>
+
+            <!-- Analysis Output & Glycemic Curve Display -->
+            <div id="resultsArea" class="space-y-6">
+                <div class="bg-slate-900/50 border border-slate-800/60 p-8 rounded-3xl text-center space-y-2">
+                    <div class="text-emerald-400 font-bold text-sm">AURA Health Engine Standing By</div>
+                    <p class="text-xs text-slate-400 max-w-md mx-auto">Run a work assessment or scan ingredients above to generate your health graph linkages and glycemic curve analysis.</p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Right Column: AI Companion Core & Health Graph Feed (5 Cols) -->
+        <section class="lg:col-span-5 bg-slate-900/90 border border-slate-800/80 p-6 rounded-3xl shadow-xl flex flex-col h-[750px] lg:h-auto">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                <div class="flex items-center space-x-3">
+                    <div class="h-9 w-9 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-black text-xs">AI</div>
+                    <div>
+                        <h3 class="text-sm font-bold text-white">AURA Companion Core</h3>
+                        <p class="text-[10px] text-emerald-400 font-medium">Evidence-Graded Reasoning Engine</p>
+                    </div>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full border border-slate-700">Persistent Graph</span>
+            </div>
+
+            <!-- Chat History Feed -->
+            <div id="chatFeed" class="flex-1 overflow-y-auto py-4 space-y-3.5 pr-2 text-xs">
+                <div class="bg-slate-950/80 border border-slate-800/80 p-4 rounded-2xl space-y-1.5 text-slate-300 shadow-sm">
+                    <div class="font-bold text-emerald-400 flex items-center justify-between">
+                        <span>AURA Core</span>
+                        <span class="text-[9px] text-slate-500">System Ready</span>
+                    </div>
+                    <p class="leading-relaxed">I am synchronized with your personal health graph. Scan ingredients using your camera or run your daily work assessment to begin optimizing your energy, nutrition, and metabolic stability.</p>
+                </div>
+            </div>
+
+            <!-- Chat Bar -->
+            <div class="pt-4 border-t border-slate-800 flex gap-2">
+                <input type="text" id="chatInput" class="flex-1 bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition" placeholder="Ask AURA about health, recipes, or fatigue...">
+                <button onclick="sendChatMessage()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-5 py-3 rounded-2xl font-black text-xs transition shadow-md shadow-emerald-500/10">Send</button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Work Assessment Test Modal -->
+    <div id="workModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 max-w-lg w-full rounded-3xl p-6 space-y-5 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="text-base font-extrabold text-white">Daily Work & Activity Assessment</h3>
+                <button onclick="toggleWorkModal()" class="text-slate-500 hover:text-slate-300 font-bold text-sm">✕</button>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <div>
+                    <label class="text-slate-300 font-bold block mb-1">Physical Labor Level</label>
+                    <select id="physicalInput" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-slate-200 focus:outline-none focus:border-emerald-500">
+                        <option value="1.2">Desk Work / Sedentary (Minimal walking)</option>
+                        <option value="1.6">Light Physical Activity (Walking, light chores)</option>
+                        <option value="2.2">Moderate Physical Labor (Standing, active movement)</option>
+                        <option value="3.5">Heavy Manual Labor / Intensive Training</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-slate-300 font-bold block mb-1">Cognitive Strain & Deep Focus (Hours)</label>
+                    <input type="number" id="cognitiveHours" value="4" min="0" max="16" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-slate-200 focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <div>
+                    <label class="text-slate-300 font-bold block mb-1">Primary Goal Today</label>
+                    <select id="goalInput" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-slate-200 focus:outline-none focus:border-emerald-500">
+                        <option value="focus">Maximize Sustained Mental Focus</option>
+                        <option value="recovery">Optimize Muscle Recovery & Energy</option>
+                        <option value="fat_loss">Sustained Fat Loss & Glycemic Control</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-800 flex justify-end space-x-2">
+                <button onclick="toggleWorkModal()" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl font-semibold text-xs">Cancel</button>
+                <button onclick="saveWorkAssessment()" class="px-5 py-2 bg-emerald-500 text-slate-950 rounded-xl font-black text-xs hover:bg-emerald-400">Calculate Recovery Protocol</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script Engine -->
+    <script>
+        // Global Application State
+        const AURAState = {
+            workStrain: { physicalMET: 1.2, cognitiveHours: 4, goal: 'focus', targetKcal: 2150 },
+            activeMealImage: null,
+            healthGraphNodes: []
+        };
+
+        // Initialize App & Load Saved State
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedState = localStorage.getItem('AURA_STATE');
+            if (savedState) {
+                try {
+                    const parsed = JSON.parse(savedState);
+                    AURAState.workStrain = parsed.workStrain || AURAState.workStrain;
+                    updateWorkSummaryUI();
+                } catch(e) { console.error('Failed to parse state:', e); }
+            }
+        });
+
+        function saveState() {
+            localStorage.setItem('AURA_STATE', JSON.stringify(AURAState));
+        }
+
+        function toggleWorkModal() {
+            const modal = document.getElementById('workModal');
+            modal.classList.toggle('hidden');
+        }
+
+        function saveWorkAssessment() {
+            const met = parseFloat(document.getElementById('physicalInput').value);
+            const hours = parseFloat(document.getElementById('cognitiveHours').value);
+            const goal = document.getElementById('goalInput').value;
+
+            // Math formula for TEE estimation
+            const baseBMR = 1600; 
+            const physKcal = met * 70 * 2; // Derived physical load
+            const cogKcal = hours * 15 * 1.5; // Derived cognitive load
+            const totalTarget = Math.round(baseBMR + physKcal + cogKcal);
+
+            AURAState.workStrain = { physicalMET: met, cognitiveHours: hours, goal: goal, targetKcal: totalTarget };
+            saveState();
+            updateWorkSummaryUI();
+            toggleWorkModal();
+
+            pushChat("AURA Core", `[DERIVED METRIC] Work Strain recalculated. Physical MET: ${met}, Cognitive Focus: ${hours}h. Target recovery threshold set to ${totalTarget} kcal. Your meal recommendations will adjust accordingly.`);
+        }
+
+        function updateWorkSummaryUI() {
+            const { cognitiveHours, targetKcal } = AURAState.workStrain;
+            document.getElementById('evaluatedStrainText').innerText = `Cognitive Strain: ${cognitiveHours} hrs focus | Physical Load: Active`;
+            document.getElementById('evaluatedKcalText').innerText = `${targetKcal} kcal`;
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                AURAState.activeMealImage = e.target.result;
+                document.getElementById('imagePreview').src = e.target.result;
+                document.getElementById('imageFileName').innerText = file.name;
+                document.getElementById('imagePreviewContainer').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearImage() {
+            AURAState.activeMealImage = null;
+            document.getElementById('fileInput').value = '';
+            document.getElementById('imagePreviewContainer').classList.add('hidden');
+        }
+
+        function runOmniVisionAnalysis() {
+            const mealText = document.getElementById('mealInput').value.trim();
+            const resultsArea = document.getElementById('resultsArea');
+
+            resultsArea.innerHTML = `
+                <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl animate-pulse text-center space-y-2">
+                    <div class="text-emerald-400 font-bold text-sm">Processing Omni-Vision & Bio-Culinary Matrix...</div>
+                    <p class="text-xs text-slate-500">Mapping raw ingredients, hyper-palatability triggers, and glycemic velocity.</p>
+                </div>
+            `;
+
+            setTimeout(() => {
+                let calories = 580;
+                let protein = 16;
+                let carbs = 78;
+                let fats = 22;
+                let spikeType = "+54 mg/dL (High Surge Risk)";
+                let riskBadgeClass = "bg-red-500/10 border-red-500/30 text-red-400";
+                
+                let swapTitle = "Cheaper & Healthier Culinary Swaps";
+                let swapBody = "Swap heavy cream for blended hung curd/Greek yogurt (saves ~120 kcal, increases protein by +12g). For high-glycemic potatoes, boil then cool them in the fridge for 4 hours to double the Resistant Starch content, cutting net glycemic velocity by ~30%.";
+
+                if (mealText.toLowerCase().includes('salad') || mealText.toLowerCase().includes('protein')) {
+                    calories = 420;
+                    protein = 34;
+                    carbs = 28;
+                    fats = 14;
+                    spikeType = "+18 mg/dL (Stable Range)";
+                    riskBadgeClass = "bg-emerald-500/10 border-emerald-500/30 text-emerald-400";
+                    swapBody = "Current recipe is optimized. High protein density supports cellular repair post cognitive focus.";
+                }
+
+                resultsArea.innerHTML = `
+                    <div class="bg-slate-900 border border-slate-800 p-6 md:p-8 rounded-3xl space-y-6 shadow-2xl">
+                        <!-- Header -->
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-4 border-b border-slate-800 gap-2">
+                            <div>
+                                <h3 class="text-base font-extrabold text-white">Bio-Culinary & Glycemic Analysis</h3>
+                                <p class="text-xs text-slate-400 mt-0.5">Target: <strong class="text-slate-200">${mealText || "Visual Scan"}</strong></p>
+                            </div>
+                            <span class="px-3.5 py-1.5 ${riskBadgeClass} text-xs font-bold rounded-xl border">${spikeType}</span>
+                        </div>
+
+                        <!-- Macro Breakdown Grid -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+                            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/80">
+                                <span class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Total Energy</span>
+                                <div class="text-xl font-black text-emerald-400 mt-1">${calories} <span class="text-xs font-normal text-slate-400">kcal</span></div>
+                            </div>
+                            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/80">
+                                <span class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Protein</span>
+                                <div class="text-xl font-black text-slate-200 mt-1">${protein} <span class="text-xs font-normal text-slate-400">g</span></div>
+                            </div>
+                            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/80">
+                                <span class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Net Carbs</span>
+                                <div class="text-xl font-black text-slate-200 mt-1">${carbs} <span class="text-xs font-normal text-slate-400">g</span></div>
+                            </div>
+                            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/80">
+                                <span class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Fats</span>
+                                <div class="text-xl font-black text-slate-200 mt-1">${fats} <span class="text-xs font-normal text-slate-400">g</span></div>
+                            </div>
+                        </div>
+
+                        <!-- 120-Minute Glucose Timeline Simulation -->
+                        <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800/80 space-y-3">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="font-bold text-slate-300 uppercase tracking-wider">Simulated 120-Min Blood Glucose Curve</span>
+                                <span class="text-emerald-400 font-semibold">Ceiling: 140 mg/dL</span>
+                            </div>
+                            <div class="grid grid-cols-5 gap-2 items-end h-28 pt-4 px-2 border-b border-slate-800/80">
+                                <div class="flex flex-col items-center gap-1.5">
+                                    <div class="w-full bg-emerald-500/40 rounded-t h-8"></div>
+                                    <span class="text-[10px] text-slate-500 font-bold">0m</span>
+                                </div>
+                                <div class="flex flex-col items-center gap-1.5">
+                                    <div class="w-full bg-emerald-500 rounded-t h-16"></div>
+                                    <span class="text-[10px] text-slate-500 font-bold">30m</span>
+                                </div>
+                                <div class="flex flex-col items-center gap-1.5">
+                                    <div class="w-full bg-red-500 rounded-t h-24 shadow-lg shadow-red-500/20"></div>
+                                    <span class="text-[10px] text-red-400 font-black">60m (Peak)</span>
+                                </div>
+                                <div class="flex flex-col items-center gap-1.5">
+                                    <div class="w-full bg-amber-500 rounded-t h-14"></div>
+                                    <span class="text-[10px] text-slate-500 font-bold">90m</span>
+                                </div>
+                                <div class="flex flex-col items-center gap-1.5">
+                                    <div class="w-full bg-emerald-500/40 rounded-t h-8"></div>
+                                    <span class="text-[10px] text-slate-500 font-bold">120m</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bio-Culinary Optimization Protocol -->
+                        <div class="bg-gradient-to-r from-emerald-950/80 to-slate-950 border border-emerald-500/30 p-5 rounded-2xl space-y-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="bg-emerald-500 text-slate-950 px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-widest">AURA Culinary Hack</span>
+                                <h4 class="text-xs font-bold text-emerald-300">${swapTitle}</h4>
+                            </div>
+                            <p class="text-xs text-slate-300 leading-relaxed">${swapBody}</p>
+                        </div>
+                    </div>
+                `;
+
+                pushChat("AURA Core", `[AI INTERPRETATION] Analysis generated for "${mealText || "Visual Meal Scan"}". Glycemic surge rating: ${spikeType}. Review the culinary swap panel to optimize protein density and flatten post-meal glucose response.`);
+            }, 800);
+        }
+
+        function pushChat(sender, text, isAi = true) {
+            const feed = document.getElementById('chatFeed');
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const div = document.createElement('div');
+            div.className = isAi 
+                ? "bg-slate-950/80 border border-slate-800/80 p-4 rounded-2xl space-y-1.5 text-slate-300 shadow-sm"
+                : "bg-emerald-950/30 border border-emerald-900/50 p-4 rounded-2xl space-y-1.5 text-slate-200 ml-4 shadow-sm";
+            
+            div.innerHTML = `
+                <div class="font-bold ${isAi ? 'text-emerald-400' : 'text-emerald-300'} flex items-center justify-between">
+                    <span>${sender}</span>
+                    <span class="text-[9px] text-slate-500">${time}</span>
+                </div>
+                <p class="leading-relaxed">${text}</p>
+            `;
+            feed.appendChild(div);
+            feed.scrollTop = feed.scrollHeight;
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const query = input.value.trim();
+            if (!query) return;
+
+            pushChat("You", query, false);
+            input.value = "";
+
+            setTimeout(() => {
+                let reply = "[HYPOTHESIS] I am cross-referencing your query with your active health graph and recent work strain data. To prevent energy slumps, maintain consistent protein distribution and avoid sedentary postures post-meal.";
+                const lower = query.toLowerCase();
+                if (lower.includes('tired') || lower.includes('fatigue') || lower.includes('slump')) {
+                    reply = "[HYPOTHESIS] Post-prandial fatigue at 2-3 PM typically results from high glycemic velocity interacting with elevated morning cognitive expenditure. Try a 10-minute walk post-meal to activate GLUT4 glucose clearing independently of insulin.";
+                } else if (lower.includes('recipe') || lower.includes('cook') || lower.includes('cheap')) {
+                    reply = "[BIO-CULINARY] High-nutrient, low-cost baseline: Lentil/Chickpea dahl paired with fiber-rich whole grains. Adding 1 tbsp vinegar or lemon before eating reduces starch breakdown rate by inhibiting salivary alpha-amylase.";
+                }
+                pushChat("AURA Core", reply);
+            }, 750);
+        }
+
+        document.getElementById('chatInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendChatMessage();
+        });
+    </script>
+    <!-- Direct Camera Capture with Fallback to Gallery -->
+<input 
+  type="file" 
+  id="fileInput" 
+  class="hidden" 
+  accept="image/*" 
+  capture="environment" 
+  onchange="handleImageUpload(event)"
+>
+</body>
+</html>
